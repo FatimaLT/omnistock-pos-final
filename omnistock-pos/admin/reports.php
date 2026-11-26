@@ -65,7 +65,7 @@ try {
          FROM ventas
          WHERE fecha_venta >= DATE_FORMAT(CURDATE() - INTERVAL 5 MONTH, "%Y-%m-01")
            AND fecha_venta < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, "%Y-%m-01")
-         GROUP BY DATE_FORMAT(fecha_venta, "%Y-%m")
+         GROUP BY DATE_FORMAT(fecha_venta, "%Y-%m-01")
          ORDER BY sale_month'
     );
     foreach ($monthlyQuery->fetchAll() as $row) {
