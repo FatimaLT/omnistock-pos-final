@@ -16,23 +16,41 @@ function database_connection(): PDO
     $username = getenv('OMNISTOCK_DB_USER') ?: 'root';
     $password = getenv('OMNISTOCK_DB_PASSWORD') ?: '';
 
-    $dsn = sprintf(
-        'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
-        $host,
-        $port,
-        $database
-    );
+    try {
+        // Intentar conectar a la base de datos remota
+        $dsn = sprintf(
+            'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+            $host,
+            $port,
+            $database
+        );
 
-    $newConnection = new PDO($dsn, $username, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ]);
+        $newConnection = new PDO($dsn, $username, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
 
-    require_once __DIR__ . '/database_initializer.php';
-    initialize_database_schema($newConnection);
+        require_once __DIR__ . '/database_initializer.php';
+        initialize_database_schema($newConnection);
 
-    $connection = $newConnection;
+        $connection = $newConnection;
+        return $connection;
+    } catch (PDOException $e) {
+        // Si InfinityFree bloquea la conexión externa, usar base de datos local SQLite en Render
+        $sqlitePath = sys_get_temp_dir() . '/omnistock.sqlite';
+        $dsn = 'sqlite:' . $sqlitePath;
 
-    return $connection;
+        $newConnection = new PDO($dsn, null, null, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
+
+        require_once __DIR__ . '/database_initializer.php';
+        initialize_database_schema($newConnection);
+
+        $connection = $newConnection;
+        return $connection;
+    }
 }
