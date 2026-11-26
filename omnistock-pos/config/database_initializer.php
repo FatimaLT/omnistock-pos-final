@@ -340,6 +340,28 @@ function initialize_database_schema(PDO $pdo): void
             $pdo->exec('INSERT INTO omnistock_schema_migrations (version) VALUES (4)');
         }
 
+        $replenishmentMigration = $pdo->prepare('SELECT 1 FROM omnistock_schema_migrations WHERE version = 5');
+        $replenishmentMigration->execute();
+        if ($replenishmentMigration->fetchColumn() === false) {
+            $pdo->exec(
+                "CREATE TABLE IF NOT EXISTS ordenes_compra (
+                    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    producto_id VARCHAR(100) NOT NULL,
+                    nombre_producto VARCHAR(255) NOT NULL,
+                    stock_actual DECIMAL(12,3) NOT NULL,
+                    stock_minimo INT UNSIGNED NOT NULL,
+                    cantidad_solicitada INT UNSIGNED NOT NULL,
+                    solicitada_por BIGINT UNSIGNED NOT NULL,
+                    solicitada_por_nombre VARCHAR(80) NOT NULL,
+                    estado ENUM('pendiente', 'atendida') NOT NULL DEFAULT 'pendiente',
+                    solicitada_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id),
+                    KEY idx_ordenes_compra_producto_estado (producto_id, estado, id)
+                ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+            );
+            $pdo->exec('INSERT INTO omnistock_schema_migrations (version) VALUES (5)');
+        }
+
         omni_seed_configured_users($pdo);
         $initialized = true;
     } finally {

@@ -53,8 +53,8 @@ function renderCriticalProducts(products) {
       ? `<img class="critical-product-image" src="${escapeAlertText(imagePath)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'critical-product-placeholder',textContent:'▦'}))">`
       : '<span class="critical-product-placeholder">▦</span>';
     const action = product.pending_order
-      ? `<span class="order-pending">Orden #${escapeAlertText(product.pending_order)} pendiente</span>`
-      : `<button class="reorder-button" type="button" data-reorder="${escapeAlertText(product.id)}" data-name="${escapeAlertText(product.name)}">Generar Orden de Compra/Reabastecer</button>`;
+      ? `<span class="order-pending">En camino · Orden #${escapeAlertText(product.pending_order)} · ${escapeAlertText(product.pending_quantity)} pzas.</span>`
+      : `<button class="reorder-button" type="button" data-reorder="${escapeAlertText(product.id)}" data-name="${escapeAlertText(product.name)}">Pedir y avisar al vendedor</button>`;
     return `<tr data-critical-row="${escapeAlertText(product.id)}">
       <td><div class="critical-product">${photo}<span><strong>${escapeAlertText(product.name)}</strong><small>ID ${escapeAlertText(product.id)}</small></span></div></td>
       <td><span class="critical-stock">${escapeAlertText(product.stock)}</span></td>
@@ -98,7 +98,7 @@ alertList.addEventListener('click', async (event) => {
   if (!button) return;
   button.disabled = true;
   const previousText = button.textContent;
-  button.textContent = 'Generando orden...';
+  button.textContent = 'Enviando pedido...';
   const data = new FormData();
   data.set('product_id', button.dataset.reorder);
 

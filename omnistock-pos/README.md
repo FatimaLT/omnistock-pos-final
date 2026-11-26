@@ -121,7 +121,11 @@ Desde **Administración → Usuarios**, un administrador puede crear perfiles `v
 
 El `.env.example` mantiene el panel público desactivado por defecto. Solo habilita `OMNISTOCK_PUBLIC_DEMO_ENABLED=1` en un entorno de desarrollo aislado y con credenciales nuevas; el formulario las muestra públicamente y OmniStock puede crear esas cuentas al conectar la base. En producción, el panel está desactivado aunque la variable esté activa. Cambia o elimina cualquier cuenta demo que ya se haya creado.
 
-Para una presentación pública, el enlace **¿Presentación en clase?** del inicio abre `/demo.php` sin iniciar sesión. Esa página muestra un catálogo ficticio de solo lectura y no se conecta a la base de datos real; no compartas credenciales de administrador o vendedor para una demostración pública.
+La ruta `/demo.php` es una página aparte con datos ficticios de solo lectura; no sustituye la aplicación principal ni permite usar el POS, el mapa o las reseñas.
+
+### Reabastecimiento de stock crítico
+
+En el catálogo administrativo, **Atención: Productos con Stock Crítico** muestra los productos bajo su mínimo. **Pedir y avisar al vendedor** genera una orden pendiente y envía a todos los vendedores un aviso de que el producto está en camino. La tabla `ordenes_compra` se crea con la migración de esquema versión 5.
 
 ### Inicio automático en VS Code
 

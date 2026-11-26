@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/product_catalog.php';
 
+function critical_stock_replenishment_quantity(float $currentStock, int $minimumStock): int
+{
+    return max(1, (int) ceil($minimumStock - $currentStock));
+}
+
 function critical_stock_products(PDO $pdo): array
 {
     $columns = product_catalog_columns($pdo);

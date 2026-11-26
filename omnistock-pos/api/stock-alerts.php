@@ -109,7 +109,7 @@ try {
         ]);
     }
 
-    $quantity = max(1, (int) ceil($minimumStock - $currentStock));
+    $quantity = critical_stock_replenishment_quantity($currentStock, $minimumStock);
     $insert = $pdo->prepare(
         "INSERT INTO ordenes_compra
          (producto_id, nombre_producto, stock_actual, stock_minimo, cantidad_solicitada, solicitada_por, solicitada_por_nombre)
@@ -125,6 +125,20 @@ try {
         'username' => $user['username'],
     ]);
     $orderId = (int) $pdo->lastInsertId();
+    $sellerNotice = $pdo->prepare(
+        "INSERT INTO mensajes_almacen
+         (emisor_id, receptor_rol, receptor_id, tipo, asunto, mensaje, producto_id, cantidad_sugerida)
+         VALUES (:sender_id, 'vendedor', NULL, 'aviso', :subject, :message, :product_id, :quantity)"
+    );
+    $productName = (string) $product['product_name'];
+    $sellerNotice->execute([
+        'sender_id' => $user['id'],
+        'subject' => mb_substr('Producto en camino: ' . $productName, 0, 150, 'UTF-8'),
+        'message' => 'Administración generó la orden de reabastecimiento #' . $orderId .
+            '. El producto ' . $productName . ' está en camino. Cantidad solicitada: ' . $quantity . '.',
+        'product_id' => (string) $product['product_id'],
+        'quantity' => $quantity,
+    ]);
     $pdo->commit();
 
     stock_alerts_json([
@@ -132,7 +146,7 @@ try {
         'existing' => false,
         'order_id' => $orderId,
         'quantity' => $quantity,
-        'message' => 'Orden de compra generada correctamente.',
+        'message' => 'Orden generada y aviso enviado a los vendedores.',
     ]);
 } catch (DomainException $exception) {
     if (isset($pdo) && $pdo->inTransaction()) {

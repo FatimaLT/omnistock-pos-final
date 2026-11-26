@@ -8,6 +8,7 @@ if (PHP_SAPI !== 'cli') {
 
 require_once __DIR__ . '/../config/payment.php';
 require_once __DIR__ . '/../config/product_catalog.php';
+require_once __DIR__ . '/../config/stock_alerts.php';
 require_once __DIR__ . '/../config/env.php';
 
 $withEnvironment = static function (array $values, callable $check): void {
@@ -108,6 +109,11 @@ $checks = [
     'quotes dynamic SQL identifiers safely' => static function (): void {
         if (product_catalog_identifier('product`name') !== '`product``name`') {
             throw new RuntimeException('Backticks in a SQL identifier should be escaped.');
+        }
+    },
+    'rounds replenishment quantity up for fractional stock gaps' => static function (): void {
+        if (critical_stock_replenishment_quantity(2.1, 5) !== 3) {
+            throw new RuntimeException('A fractional stock gap should request enough whole units to reach the minimum.');
         }
     },
 ];
