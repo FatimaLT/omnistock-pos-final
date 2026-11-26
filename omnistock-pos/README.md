@@ -105,7 +105,7 @@ No publiques credenciales ni expongas el puerto de MySQL a internet. En un entor
 
 Al iniciar una conexión, OmniStock crea las tablas que falten (incluido un catálogo base `productos`) y aplica migraciones aditivas idempotentes para ventas, referencias de transferencia y mensajería. Las tablas `productos` ya existentes se conservan sin cambios. El usuario MySQL necesita permisos `CREATE`, `ALTER` e `INSERT` en la base. No se eliminan tablas ni datos. En instalaciones nuevas no se crea una cuenta admin con contraseña pública: define `OMNISTOCK_INITIAL_ADMIN_PASSWORD` y, opcionalmente, `OMNISTOCK_INITIAL_ADMIN_USERNAME`/`OMNISTOCK_INITIAL_ADMIN_NAME` para crearla con hash al primer inicio.
 
-Para habilitar el perfil de prueba solicitado, define explícitamente `OMNISTOCK_SEED_DEMO_SELLER=1` y `OMNISTOCK_DEFAULT_SELLER_PASSWORD` antes de iniciar PHP/Apache. La contraseña debe tener entre 12 y 200 caracteres; el registro es idempotente y se guarda con `password_hash()`. No guardes contraseñas en archivos del proyecto. Deshabilita la opción y cambia la contraseña antes de publicar el sistema.
+Para habilitar el perfil de prueba solicitado, define explícitamente `OMNISTOCK_SEED_DEMO_SELLER=1` y `OMNISTOCK_DEFAULT_SELLER_PASSWORD` antes de iniciar PHP/Apache. La contraseña debe tener entre 12 y 200 caracteres; el registro es idempotente y se guarda con `password_hash()`. Para una recuperación puntual de las cuentas iniciales, configura también `OMNISTOCK_RESET_INITIAL_USERS_ONCE=1`; la migración de esquema versión 6 actualiza sus hashes existentes una sola vez (admin y vendedor si está habilitado). Retira esa variable después de confirmar el inicio de sesión. No guardes contraseñas en archivos del proyecto.
 
 ## Acceso de usuarios
 

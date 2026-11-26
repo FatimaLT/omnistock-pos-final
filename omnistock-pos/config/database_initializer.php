@@ -23,7 +23,7 @@ function omni_ensure_column(PDO $pdo, string $table, string $column, string $def
     }
 }
 
-function omni_seed_user(PDO $pdo, string $login, string $displayName, string $role, string $password): void
+function omni_seed_user(PDO $pdo, string $login, string $displayName, string $role, string $password, bool $resetExistingPassword = false): void
 {
     if (strlen($password) < 12 || strlen($password) > 200) {
         throw new RuntimeException('Las contraseñas iniciales deben tener entre 12 y 200 caracteres.');
@@ -51,6 +51,16 @@ function omni_seed_user(PDO $pdo, string $login, string $displayName, string $ro
     );
     $exists->execute(['login' => $login]);
     if ($exists->fetchColumn() !== false) {
+        if ($resetExistingPassword) {
+            $update = $pdo->prepare(
+                'UPDATE `usuarios` SET `' . str_replace('`', '``', $passwordColumn) .
+                '` = :password WHERE `' . str_replace('`', '``', $loginColumn) . '` = :login'
+            );
+            $update->execute([
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'login' => $login,
+            ]);
+        }
         return;
     }
 
@@ -360,6 +370,32 @@ function initialize_database_schema(PDO $pdo): void
                 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
             );
             $pdo->exec('INSERT INTO omnistock_schema_migrations (version) VALUES (5)');
+        }
+
+        $credentialResetMigration = $pdo->prepare('SELECT 1 FROM omnistock_schema_migrations WHERE version = 6');
+        $credentialResetMigration->execute();
+        if (
+            $credentialResetMigration->fetchColumn() === false &&
+            getenv('OMNISTOCK_RESET_INITIAL_USERS_ONCE') === '1'
+        ) {
+            $adminPassword = getenv('OMNISTOCK_INITIAL_ADMIN_PASSWORD');
+            if (!is_string($adminPassword) || $adminPassword === '') {
+                throw new RuntimeException('Define OMNISTOCK_INITIAL_ADMIN_PASSWORD antes de restablecer la cuenta admin.');
+            }
+
+            $adminLogin = getenv('OMNISTOCK_INITIAL_ADMIN_USERNAME') ?: 'admin@omnistock.com';
+            $adminName = getenv('OMNISTOCK_INITIAL_ADMIN_NAME') ?: 'Administrador';
+            omni_seed_user($pdo, $adminLogin, $adminName, 'admin', $adminPassword, true);
+
+            if (getenv('OMNISTOCK_SEED_DEMO_SELLER') === '1') {
+                $sellerPassword = getenv('OMNISTOCK_DEFAULT_SELLER_PASSWORD');
+                if (!is_string($sellerPassword) || $sellerPassword === '') {
+                    throw new RuntimeException('Define OMNISTOCK_DEFAULT_SELLER_PASSWORD antes de restablecer el vendedor.');
+                }
+                omni_seed_user($pdo, 'vendedor@omnistock.com', 'Vendedor de prueba', 'vendedor', $sellerPassword, true);
+            }
+
+            $pdo->exec('INSERT INTO omnistock_schema_migrations (version) VALUES (6)');
         }
 
         omni_seed_configured_users($pdo);
