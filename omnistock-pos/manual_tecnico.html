@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Resumen técnico de OmniStock POS: arquitectura, instalación y límites de demostración.">
+  <title>Manual técnico · OmniStock POS</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f3f6fb; }
+    body { margin: 0; padding: 32px 16px; }
+    main { max-width: 850px; margin: auto; padding: 30px; border: 1px solid #d8e0ec; border-radius: 14px; background: #fff; box-shadow: 0 12px 35px #0f172a12; }
+    h1, h2 { color: #101c35; }
+    h2 { margin-top: 28px; font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px; border: 1px solid #d8e0ec; text-align: left; }
+    th { background: #eef4ff; }
+    code { padding: 2px 5px; border-radius: 4px; background: #eef2f7; }
+    .notice { padding: 12px 14px; border-left: 4px solid #d97706; background: #fff7ed; }
+    a { color: #245fd1; }
+    @media (max-width: 560px) { main { padding: 20px; } table { font-size: .9rem; } }
+    @media print { body { padding: 0; background: white; } main { border: 0; box-shadow: none; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>OmniStock &amp; POS</h1>
+    <p>Manual técnico resumido · versión vigente al 25 de noviembre de 2026</p>
+  </header>
+  <p class="notice">La aplicación actual es PHP/MySQL con JavaScript nativo; no es una aplicación React/Vite. Las operaciones de tarjeta y transferencia son simulaciones.</p>
+  <h2>Stack</h2>
+  <table>
+    <thead><tr><th>Capa</th><th>Tecnología</th></tr></thead>
+    <tbody>
+      <tr><td>Interfaz</td><td>PHP, HTML semántico, CSS y JavaScript ES6+</td></tr>
+      <tr><td>Backend</td><td>PHP 8+, PDO y endpoints JSON</td></tr>
+      <tr><td>Persistencia</td><td>MySQL/MariaDB con transacciones InnoDB</td></tr>
+      <tr><td>Mapa</td><td>Leaflet y mosaicos de OpenStreetMap</td></tr>
+    </tbody>
+  </table>
+  <h2>Arquitectura</h2>
+  <p>El proyecto separa configuración y datos en <code>config/</code>, endpoints en <code>api/</code>, administración en <code>admin/</code>, estilos/scripts en <code>assets/</code> y componentes PHP en <code>components/</code> organizados en atoms, molecules, organisms, templates y pages.</p>
+  <p>El flujo de venta valida sesión y CSRF, vuelve a consultar precios y existencias del servidor, y guarda la venta/detalles y el descuento de stock dentro de una transacción. El ticket se consulta luego mediante una ruta autorizada.</p>
+  <h2>Instalación local en Windows</h2>
+  <ol>
+    <li>Instala XAMPP con PHP 8+, MySQL/MariaDB y <code>pdo_mysql</code>.</li>
+    <li>Copia <code>.env.example</code> a <code>.env</code>, configura credenciales locales y crea una base dedicada en MySQL.</li>
+    <li>Desde la carpeta del proyecto, ejecuta <code>php -S 127.0.0.1:8765 -t .</code> o utiliza Apache en XAMPP.</li>
+    <li>Abre <code>http://127.0.0.1:8765/login.php</code>. El servidor PHP integrado es solo para desarrollo y no aplica `.htaccess`.</li>
+  </ol>
+  <h2>Validaciones</h2>
+  <p>En PowerShell ejecuta <code>.\scripts\validate.ps1</code> para revisar sintaxis PHP/JavaScript y las pruebas unitarias básicas.</p>
+  <h2>Límites y despliegue</h2>
+  <p>Antes de publicar, configura HTTPS, variables seguras, base aislada, permisos mínimos, reglas de archivos privados y respaldos probados. Valida en el hosting las rutas amigables y el mapa.</p>
+  <p>La transferencia demo no verifica depósitos; si termina su cuenta regresiva registra una venta y descuenta stock. El PIN de tarjeta no se procesa con un banco, las tasas de divisa son demostrativas y el resumen de sucursales se basa en reglas locales.</p>
+  <p>Las instrucciones completas están en <a href="MANUAL_TECNICO.md">MANUAL_TECNICO.md</a>. La evidencia y pendientes están en <a href="CHECKLIST_PRODUCCION.md">CHECKLIST_PRODUCCION.md</a>.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+ALTER TABLE ventas
+    ADD COLUMN IF NOT EXISTS vendedor_id BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER id,
+    ADD COLUMN IF NOT EXISTS vendedor_nombre VARCHAR(80) NOT NULL DEFAULT '' AFTER vendedor_id,
+    ADD COLUMN IF NOT EXISTS subtotal DECIMAL(12,2) NOT NULL DEFAULT 0.00 AFTER vendedor_nombre,
+    ADD COLUMN IF NOT EXISTS iva_porcentaje DECIMAL(5,2) NOT NULL DEFAULT 0.00 AFTER subtotal,
+    ADD COLUMN IF NOT EXISTS iva DECIMAL(12,2) NOT NULL DEFAULT 0.00 AFTER iva_porcentaje,
+    MODIFY COLUMN total DECIMAL(12,2) NOT NULL,
+    ADD COLUMN IF NOT EXISTS metodo_pago ENUM('efectivo', 'tarjeta', 'transferencia') NOT NULL DEFAULT 'efectivo' AFTER total,
+    ADD COLUMN IF NOT EXISTS efectivo_recibido DECIMAL(12,2) NULL AFTER metodo_pago,
+    ADD COLUMN IF NOT EXISTS cambio DECIMAL(12,2) NOT NULL DEFAULT 0.00 AFTER efectivo_recibido,
+    ADD COLUMN IF NOT EXISTS referencia_transferencia VARCHAR(50) NULL AFTER cambio;
+
+ALTER TABLE detalle_ventas
+    ADD COLUMN IF NOT EXISTS nombre_producto VARCHAR(255) NOT NULL DEFAULT '' AFTER producto_id,
+    ADD COLUMN IF NOT EXISTS subtotal_linea DECIMAL(12,2) NOT NULL DEFAULT 0.00 AFTER cantidad;

@@ -1,0 +1,33 @@
+* { box-sizing: border-box; }
+body { margin: 0; padding: 28px 14px; color: #18181b; background: #f4f4f5; font-family: Arial, Helvetica, sans-serif; font-size: 13px; }
+.receipt-actions { display: flex; width: min(100%, 380px); align-items: center; justify-content: space-between; gap: 12px; margin: 0 auto 16px; }
+.receipt-actions a { color: #3f5265; font-size: 12px; text-decoration: none; }
+.receipt-actions button { padding: 9px 13px; border: 0; border-radius: 6px; color: white; background: #0891b2; font-size: 12px; font-weight: 700; cursor: pointer; }
+.receipt { width: min(100%, 302px); min-height: 360px; margin: 0 auto; padding: 20px 19px; background: #fff; box-shadow: 0 8px 36px rgba(15, 23, 42, .12); font-family: 'Courier New', monospace; font-size: 11px; }
+.receipt-header { text-align: center; }
+.receipt-logo { display: grid; width: 31px; height: 31px; margin: 0 auto 8px; place-items: center; border: 1.5px solid #18181b; border-radius: 9px; font-family: Arial, sans-serif; font-size: 19px; font-weight: 800; }
+.receipt-header h1 { margin: 0; font-size: 17px; letter-spacing: 1px; }
+.receipt-header p { margin: 5px 0 14px; font-size: 9px; letter-spacing: 1px; }
+.receipt-meta { display: grid; gap: 5px; }
+.receipt-meta > div, .receipt-totals > div, .receipt-payment > div { display: flex; justify-content: space-between; gap: 10px; }
+.receipt-meta span, .receipt-payment span { color: #52525b; }
+.receipt-meta strong { text-align: right; }
+.receipt-divider { margin: 11px 0; border-top: 1px dashed #71717a; }
+.receipt-columns { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 9px; font-weight: 700; }
+.receipt-item { margin-bottom: 9px; }
+.receipt-item > strong { display: block; overflow-wrap: anywhere; font-weight: 600; }
+.receipt-item > div { display: flex; justify-content: space-between; gap: 6px; margin-top: 3px; color: #52525b; }
+.receipt-item > div strong { color: #18181b; white-space: nowrap; }
+.receipt-totals { display: grid; gap: 6px; }
+.receipt-grand-total { margin-top: 4px; padding-top: 8px; border-top: 1px solid #27272a; font-size: 14px; font-weight: 700; }
+.receipt-payment { display: grid; gap: 5px; margin-top: 12px; }
+.receipt-footer { display: grid; gap: 5px; margin-top: 20px; text-align: center; }
+.receipt-footer strong { font-size: 12px; }
+.receipt-footer span { color: #52525b; font-size: 9px; }
+@page { size: 80mm auto; margin: 4mm; }
+@media print {
+  body { padding: 0; background: #fff; }
+  .receipt-actions { display: none; }
+  .receipt { width: 72mm; min-height: 0; margin: 0; padding: 0; box-shadow: none; font-size: 10px; }
+  .receipt-header h1 { font-size: 15px; }
+}

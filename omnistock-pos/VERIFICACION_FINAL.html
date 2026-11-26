@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Estado y límites de la verificación local de OmniStock POS.">
+  <title>Estado de verificación · OmniStock POS</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f3f6fb; }
+    body { margin: 0; padding: 32px 16px; }
+    main { max-width: 760px; margin: auto; padding: 28px; border: 1px solid #d8e0ec; border-radius: 14px; background: #fff; box-shadow: 0 12px 35px #0f172a12; }
+    h1 { margin-top: 0; color: #101c35; }
+    h2 { margin-top: 26px; font-size: 1.1rem; }
+    .status { padding: 12px 14px; border-left: 4px solid #d97706; background: #fff7ed; }
+    li { margin: 8px 0; }
+    a { color: #245fd1; }
+    @media print { body { padding: 0; background: white; } main { border: 0; box-shadow: none; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>OmniStock &amp; POS</h1>
+    <p>Estado de verificación local · 25 de noviembre de 2026</p>
+  </header>
+  <p class="status"><strong>Validación parcial.</strong> Esta revisión no certifica el proyecto para producción ni para procesar pagos reales.</p>
+  <h2>Comprobaciones ejecutadas</h2>
+  <ul>
+    <li>Sintaxis correcta en 59 archivos PHP y 15 archivos JavaScript.</li>
+    <li>Siete comprobaciones unitarias locales, sin fallos.</li>
+    <li>Se revisó el flujo de transferencia de demostración y se canceló antes de registrar una venta o descontar stock.</li>
+  </ul>
+  <h2>Pendiente</h2>
+  <ul>
+    <li>Ejecutar venta completa, ticket, inventario y rollback en una base aislada.</li>
+    <li>Completar pruebas responsivas, accesibilidad y flujos de ambos roles.</li>
+    <li>Validar el hosting, HTTPS, permisos, registros y restauración de respaldos.</li>
+  </ul>
+  <h2>Limitaciones de demo</h2>
+  <p>Tarjeta y transferencia no procesan pagos bancarios. La cuenta regresiva de transferencia registra una venta local si termina. Las tasas de cambio son demostrativas; el resumen administrativo usa reglas y no un modelo de IA.</p>
+  <p>Consulta el <a href="MANUAL_TECNICO.md">manual técnico</a> y el <a href="CHECKLIST_PRODUCCION.md">checklist actualizado</a> para instrucciones y detalles.</p>
+</main>
+</body>
+</html>

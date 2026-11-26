@@ -1,0 +1,30 @@
+OMNISTOCK & POS — ESTADO DE VERIFICACIÓN
+Revisión local: 25 de noviembre de 2026
+
+ESTADO: VALIDACIÓN PARCIAL. NO ES CERTIFICACIÓN DE PRODUCCIÓN.
+
+Comprobaciones repetibles:
+- 59 archivos PHP: sintaxis válida.
+- 15 archivos JavaScript: sintaxis válida.
+- 7 comprobaciones unitarias locales: 0 fallos.
+  Ejecutar: .\scripts\validate.ps1
+
+Comprobaciones manuales documentadas:
+- Inicio de sesión por rol y navegación por módulos principales.
+- Transferencia de demostración: datos visibles, referencia precargada,
+  inicio/cancelación del temporizador. No se completó una venta ni se
+  modificó el inventario.
+
+Pendiente:
+- Venta completa y rollback comprobados en una base de pruebas aislada.
+- Pruebas responsivas y revisión final de accesibilidad.
+- Validación de hosting, HTTPS, permisos, logs y restauración de respaldo.
+- Pruebas automatizadas de integración y navegador más amplias.
+
+Los pagos con tarjeta y transferencia no están conectados a bancos. La cuenta
+regresiva de transferencia registra una venta local y descuenta stock cuando
+termina; no confirma depósitos. Las tasas son demostrativas y el resumen
+administrativo es heurístico.
+
+Consultar CHECKLIST_PRODUCCION.md y MANUAL_TECNICO.md para el estado detallado,
+los límites del sistema y los pasos pendientes.

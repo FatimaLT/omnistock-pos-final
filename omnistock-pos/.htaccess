@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteRule (^|/)\. - [F,L]
+RewriteRule ^resenas/?$ resenas.php [L,QSA]
+RewriteRule ^mapa-sucursales/?$ mapa-sucursales.php [L,QSA]

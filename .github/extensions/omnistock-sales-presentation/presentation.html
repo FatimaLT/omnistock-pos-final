@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniStock · Presentación comercial</title>
+  <style>
+    :root { --navy:#09111f; --panel:#111d31; --cyan:#3bd5dc; --green:#62d9ad; --white:#f6f8fc; --muted:#9facbf; --amber:#ffb76b; --line:rgba(255,255,255,.09); }
+    * { box-sizing:border-box; }
+    body { margin:0; overflow:hidden; background:var(--navy); color:var(--white); font-family:Inter,"Segoe UI",Arial,sans-serif; }
+    button { font:inherit; }
+    .stage { height:100vh; display:grid; grid-template-columns:88px 1fr; }
+    .rail { border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; padding:22px 10px 16px; background:#0b1424; z-index:5; }
+    .mark { width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg,var(--cyan),#269cce); color:#07111e; font-weight:900; font-size:25px; box-shadow:0 12px 35px rgba(59,213,220,.18); }
+    .progress { margin:26px 0 auto; display:flex; flex-direction:column; gap:8px; }
+    .dot { width:30px; height:30px; border:1px solid transparent; border-radius:9px; background:transparent; color:var(--muted); cursor:pointer; transition:.25s; font-size:11px; }
+    .dot:hover,.dot:focus-visible { border-color:var(--cyan); color:var(--white); outline:none; }
+    .dot.active { background:var(--cyan); color:#07111e; font-weight:800; }
+    .speaker { width:42px; height:42px; border:1px solid var(--line); border-radius:50%; color:var(--muted); background:transparent; cursor:pointer; }
+    .slide { display:none; position:relative; height:100vh; overflow:auto; padding:54px 70px 44px; background:radial-gradient(circle at 82% 15%,rgba(59,213,220,.07),transparent 26%),var(--navy); }
+    .slide.active { display:block; animation:enter .55s cubic-bezier(.2,.8,.2,1); }
+    @keyframes enter { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
+    .kicker { color:var(--cyan); font-size:12px; letter-spacing:3px; font-weight:800; text-transform:uppercase; }
+    h1 { margin:16px 0 18px; font-size:clamp(44px,5.5vw,76px); line-height:1.02; letter-spacing:-3px; max-width:1000px; }
+    h2 { margin:12px 0 28px; font-size:clamp(32px,4vw,54px); letter-spacing:-2px; }
+    h3 { margin:0 0 10px; font-size:20px; }
+    p { line-height:1.55; }
+    .accent { color:var(--cyan); } .green { color:var(--green); } .muted { color:var(--muted); }
+    .topline { display:flex; justify-content:space-between; align-items:flex-start; }
+    .number { color:var(--muted); font-size:12px; letter-spacing:2px; }
+    .hero { min-height:560px; display:grid; grid-template-columns:1.15fr .85fr; gap:54px; align-items:center; }
+    .hero h1 span { color:var(--cyan); }
+    .hero-copy { color:var(--muted); font-size:20px; max-width:630px; }
+    .hero-actions { display:flex; gap:12px; margin-top:32px; }
+    .cta { border:0; border-radius:12px; padding:15px 18px; background:var(--cyan); color:#07111e; font-weight:850; cursor:pointer; box-shadow:0 16px 40px rgba(59,213,220,.16); }
+    .ghost { border:1px solid var(--line); border-radius:12px; padding:15px 18px; background:transparent; color:var(--white); cursor:pointer; }
+    .product-card { border:1px solid var(--line); background:linear-gradient(145deg,#16243a,#0e1929); border-radius:24px; padding:20px; box-shadow:0 30px 80px rgba(0,0,0,.28); }
+    .mockbar { display:flex; gap:6px; border-bottom:1px solid var(--line); padding-bottom:13px; }
+    .mockbar i { width:8px; height:8px; border-radius:50%; background:#526071; } .mockbar i:first-child { background:#f06d75; }
+    .mockgrid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:14px; }
+    .mockitem { height:88px; border-radius:12px; background:#0a1423; border:1px solid var(--line); padding:11px; display:flex; flex-direction:column; justify-content:space-between; }
+    .mockitem b { color:var(--cyan); } .mockitem span { height:7px; border-radius:4px; background:#26354a; width:80%; }
+    .grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .grid2 { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:24px; min-height:170px; transition:.25s; }
+    .card:hover { transform:translateY(-4px); border-color:rgba(59,213,220,.38); }
+    .card-num { color:var(--cyan); font-size:12px; letter-spacing:2px; }
+    .card p { color:var(--muted); margin:8px 0 0; }
+    .architecture { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; }
+    .layer { min-height:280px; }
+    .layer-head { height:44px; display:flex; align-items:center; border-bottom:1px solid var(--line); color:var(--cyan); font-weight:800; letter-spacing:1px; }
+    .stack { display:flex; flex-direction:column; gap:9px; margin-top:15px; }
+    .stack span { background:#0b1422; border:1px solid var(--line); border-radius:9px; padding:11px 12px; color:var(--muted); }
+    .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:center; }
+    .flow-card { text-align:center; min-height:170px; display:flex; flex-direction:column; justify-content:center; }
+    .flow-card strong { color:var(--cyan); font-size:13px; }
+    .flow-card b { margin:11px 0 8px; }
+    .flow-card span { color:var(--muted); font-size:13px; }
+    .arrow { text-align:center; color:var(--green); font-size:28px; }
+    .api-row { display:grid; grid-template-columns:105px 300px 1fr; gap:18px; align-items:center; border-bottom:1px solid var(--line); padding:14px 0; }
+    .method { display:inline-grid; place-items:center; height:34px; border-radius:8px; color:#07111e; background:var(--green); font-weight:900; font-size:12px; }
+    code { color:var(--cyan); font-family:"Cascadia Code","Consolas",monospace; }
+    .api-row p { margin:0; color:var(--muted); }
+    .security-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .security-grid .card { min-height:128px; }
+    .metric { font-size:42px; color:var(--cyan); font-weight:900; }
+    .tablemap { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+    .tablemap .card { min-height:210px; }
+    .tablemap code { display:block; margin-top:12px; color:var(--muted); line-height:1.7; }
+    .demo { border:1px solid rgba(59,213,220,.22); background:linear-gradient(135deg,rgba(59,213,220,.08),rgba(98,217,173,.03)); border-radius:22px; padding:30px; }
+    .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:20px; }
+    .step { border-top:3px solid var(--cyan); padding:16px 12px; background:var(--panel); }
+    .step strong { color:var(--cyan); } .step p { color:var(--muted); font-size:14px; }
+    .warning { border-left:4px solid var(--amber); padding:14px 18px; background:rgba(255,183,107,.07); color:#ffdab1; border-radius:6px; }
+    .close { text-align:center; min-height:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .close h2 { max-width:900px; font-size:64px; }
+    .close-row { display:flex; gap:10px; margin-top:24px; flex-wrap:wrap; justify-content:center; }
+    .chip { border:1px solid var(--line); border-radius:999px; padding:10px 14px; color:var(--muted); }
+    .interface-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; height:calc(100vh - 220px); min-height:520px; }
+    .interface-card { position:relative; overflow:hidden; background:#0b1422; border:1px solid var(--line); border-radius:16px; }
+    .interface-card img { width:100%; height:calc(100% - 54px); display:block; object-fit:cover; object-position:top center; border-bottom:1px solid var(--line); }
+    .interface-label { height:54px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; }
+    .interface-label strong { font-size:15px; } .interface-label span { color:var(--cyan); font-size:11px; letter-spacing:1px; }
+    .demo-shell { display:grid; grid-template-columns:190px 1fr; height:calc(100vh - 210px); min-height:520px; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:#0b1422; }
+    .demo-tabs { border-right:1px solid var(--line); padding:14px 10px; background:#0d1727; }
+    .demo-tab { width:100%; height:48px; margin-bottom:8px; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--muted); text-align:left; padding:0 12px; cursor:pointer; }
+    .demo-tab.active { background:rgba(59,213,220,.11); border-color:rgba(59,213,220,.28); color:var(--white); }
+    .demo-tab b { display:block; font-size:13px; } .demo-tab span { display:block; margin-top:3px; font-size:10px; color:var(--cyan); }
+    .demo-panel { display:none; min-width:0; height:100%; } .demo-panel.active { display:block; animation:enter .35s ease; }
+    .login-demo { height:100%; display:grid; grid-template-columns:.85fr 1fr; }
+    .login-demo-left { padding:38px; background:linear-gradient(145deg,#102443,#0a1526); }
+    .login-demo-left h3 { font-size:32px; line-height:1.05; } .login-demo-left p { color:var(--muted); }
+    .login-form-demo { margin:auto; width:min(360px,80%); align-self:center; }
+    .login-form-demo label { display:block; margin:14px 0 7px; color:var(--muted); font-size:12px; }
+    .login-form-demo input { width:100%; height:44px; border:1px solid var(--line); border-radius:9px; background:#101d31; color:var(--white); padding:0 12px; }
+    .login-form-demo button { width:100%; height:44px; margin-top:18px; border:0; border-radius:9px; background:var(--cyan); color:#07111e; font-weight:800; }
+    .mini-pos { height:100%; display:grid; grid-template-columns:1fr 260px; }
+    .mini-catalog { padding:18px; border-right:1px solid var(--line); }
+    .mini-toolbar { display:flex; gap:8px; margin-bottom:12px; } .mini-toolbar input { flex:1; height:36px; border:1px solid var(--line); border-radius:8px; background:#111d31; color:var(--white); padding:0 10px; }
+    .mini-products { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .mini-product { min-height:118px; border:1px solid var(--line); border-radius:10px; background:#111d31; padding:10px; }
+    .mini-product .mini-name { font-size:12px; height:34px; } .mini-product strong { color:var(--cyan); } .mini-product button { width:100%; height:28px; margin-top:8px; border:0; border-radius:7px; background:var(--cyan); color:#07111e; font-weight:800; cursor:pointer; }
+    .mini-cart { padding:18px; } .mini-cart-row { display:flex; justify-content:space-between; border-bottom1px solid var(--line); padding10px 0; font-size12px; } .mini-total { margin-top18px; font-size24px; color:var(--green); } .mini-cart button { width100%; height38px; margin-top12px; border0; border-radius8px; background:var(--green); color:#07111e; font-weight800; }
+    .mini-dashboard { padding:18px; overflow:auto; }     .mini-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; } .mini-metric { border:1px solid var(--line); border-radius:10px; background:#111d31; padding:14px; } .mini-metric small { color:var(--muted); } .mini-metric strong { display:block; margin-top:7px; color:var(--cyan); font-size:22px; }
+    .mini-bars { height190px; display:flex; align-items:flex-end; gap12px; border-bottom1px solid var(--line); margin-top18px; padding:14px 10px 0; } .mini-bars i { flex1; min-height5px; border-radius6px 6px 0 0; background:linear-gradient(var(--cyan),#2380a4); transition:.35s; }
+    .mini-messages { height100%; display:grid; grid-template-columns:.75fr 1fr; }
+    .real-interface-grid { display:grid; grid-template-columns:210px 1fr; height:calc(100vh - 210px); min-height:520px; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:#0b1422; }
+    .real-interface-tabs { border-right:1px solid var(--line); padding:14px 10px; background:#0d1727; }
+    .real-interface-tabs .demo-tab { width:100%; }
+    .real-frame-panel { display:none; position:relative; min-width:0; height:100%; background:#07111f; }
+    .real-frame-panel.active { display:block; }
+    .real-frame-panel iframe { width:100%; height:100%; border:0; background:#07111f; }
+    .real-frame-panel img { width:100%; height:100%; border:0; object-fit:contain; background:#07111f; }
+    .interface-open { position:absolute; right:12px; top:12px; z-index:3; height:34px; border:1px solid var(--line); border-radius8px; background:#0d1727cc; color:var(--white); padding0 10px; text-decoration:none; display:flex; align-items:center; font-size11px; backdrop-filter:blur(8px); }
+    .mini-inbox { border-right1px solid var(--line); padding18px; } .mini-compose { padding18px; } .mini-compose input,.mini-compose textarea { width100%; border1px solid var(--line); border-radius8px; background:#111d31; colorvar(--white); padding10px; margin-bottom8px; } .mini-compose textarea { height110px; resize:none; } .mini-compose button { height36px; border0; border-radius8px; background:var(--cyan); color:#07111e; font-weight800; } .mini-message { border1px solid var(--line); border-radius8px; padding10px; margin-bottom8px; colorvar(--muted); font-size12px; }
+    .controls { position:fixed; right:28px; bottom:22px; display:flex; align-items:center; gap:8px; z-index:20; }
+    .navbtn { width:44px; height:44px; border:1px solid var(--line); border-radius:12px; background:#111d31cc; color:var(--white); cursor:pointer; backdrop-filter:blur(12px); }
+    .count { min-width:58px; text-align:center; color:var(--muted); font-size:12px; }
+    @media (max-width:900px) { .stage{grid-template-columns:62px 1fr}.slide{padding:36px 28px}.hero{grid-template-columns:1fr}.product-card{display:none}.grid4,.grid3,.architecture,.tablemap{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}.arrow{display:none}.api-row{grid-template-columns:90px 1fr}.api-row p{grid-column:2}.steps{grid-template-columns:1fr 1fr}.close h2{font-size:42px} }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <aside class="rail" aria-label="Navegación de presentación">
+      <div class="mark">O</div>
+      <nav class="progress" id="progress"></nav>
+      <button class="speaker" id="speaker" title="Iniciar presentación desde primera diapositiva" aria-label="Iniciar presentación">▶</button>
+    </aside>
+    <div id="slides">
+      <section class="slide">
+        <div class="hero">
+          <div>
+            <div class="kicker">OmniStock POS Engine</div>
+            <h1>Todo tu negocio.<br><span>Un solo sistema.</span></h1>
+            <p class="hero-copy">Punto de venta, inventario, reportes y comunicación interna sobre una arquitectura web rápida, segura y preparada para crecer.</p>
+            <div class="hero-actions"><button class="cta" data-go="2">Ver cómo funciona</button><button class="ghost" data-go="11">Ver demostración</button></div>
+          </div>
+          <div class="product-card" aria-label="Vista simulada del POS">
+            <div class="mockbar"><i></i><i></i><i></i></div>
+            <div class="mockgrid"><div class="mockitem"><span></span><b>Bebidas</b></div><div class="mockitem"><span></span><b>Botanas</b></div><div class="mockitem"><span></span><b>Abarrotes</b></div><div class="mockitem"><span></span><b>Galletas</b></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Producto</div><h2>Qué es OmniStock</h2></div><div class="number">02 / 12</div></div>
+        <div class="grid4">
+          <article class="card"><div class="card-num">01 · OPERACIÓN</div><h3>Punto de venta</h3><p>Catálogo, carrito, IVA configurable y cobro en efectivo, tarjeta o transferencia.</p></article>
+          <article class="card"><div class="card-num">02 · INVENTARIO</div><h3>Stock inteligente</h3><p>Existencias reales, mínimos configurables y alertas automáticas.</p></article>
+          <article class="card"><div class="card-num">03 · CONTROL</div><h3>Acceso por roles</h3><p>Administrador para gestionar; vendedor para operar sin funciones sensibles.</p></article>
+          <article class="card"><div class="card-num">04 · NEGOCIO</div><h3>Decisiones</h3><p>Historial, comprobantes, reportes, productos top y respaldos.</p></article>
+        </div>
+        <p class="green" style="margin-top:32px;font-size:19px">Resultado: menos procesos manuales, menos errores y mejor trazabilidad.</p>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Arquitectura</div><h2>Una solución en tres capas</h2></div><div class="number">03 / 12</div></div>
+        <div class="architecture">
+          <article class="card layer"><div class="layer-head">01 · PRESENTACIÓN</div><div class="stack"><span>HTML semántico</span><span>CSS responsive</span><span>JavaScript vanilla</span><span>DOM, Map y fetch()</span></div></article>
+          <article class="card layer"><div class="layer-head">02 · LÓGICA</div><div class="stack"><span>PHP 8 tipado</span><span>Sesiones y RBAC</span><span>CSRF y validación</span><span>Endpoints JSON</span></div></article>
+          <article class="card layer"><div class="layer-head">03 · DATOS</div><div class="stack"><span>MySQL / XAMPP</span><span>PDO + drivers MySQL</span><span>InnoDB y ACID</span><span>Prepared statements</span></div></article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Tecnologías</div><h2>Herramientas profesionales sin exceso</h2></div><div class="number">04 / 12</div></div>
+        <div class="grid2">
+          <article class="card"><h3><span class="accent">PHP 8</span> — Motor del servidor</h3><p>Procesa formularios, sesiones, permisos, autenticación y APIs. Utiliza tipos estrictos y manejo controlado de excepciones.</p></article>
+          <article class="card"><h3><span class="accent">MySQL + InnoDB</span> — Fuente confiable</h3><p>Conserva relaciones entre ventas, productos y vendedores y garantiza transacciones con Atomicidad, Consistencia, Aislamiento y Durabilidad.</p></article>
+          <article class="card"><h3><span class="accent">JavaScript</span> — Experiencia de caja</h3><p><code>fetch()</code>, DOM y modales permiten actualizar el carrito, consultar historial y mostrar resultados sin recargar toda la aplicación.</p></article>
+          <article class="card"><h3><span class="accent">HTML + CSS</span> — Interfaz adaptable</h3><p>Una interfaz moderna, responsive y accesible, sin depender de frameworks externos ni de servicios CDN para operar.</p></article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Seguridad</div><h2>Protección desde la sesión hasta la consulta</h2></div><div class="number">05 / 12</div></div>
+        <div class="security-grid">
+          <article class="card"><h3>Contraseñas con hash seguro</h3><p><code>password_hash()</code> y <code>password_verify()</code> para algoritmos predeterminados de PHP; nunca almacenamiento en texto plano.</p></article>
+          <article class="card"><h3>Sesiones endurecidas</h3><p>Cookies <code>HttpOnly</code>, <code>Secure</code> cuando existe HTTPS y <code>SameSite=Lax</code>, además de regeneración del ID al autenticar.</p></article>
+          <article class="card"><h3>CSRF y validación</h3><p>Tokens aleatorios de 32 bytes en formularios y operaciones sensibles. Las entradas reciben límites, tipos y rangos.</p></article>
+          <article class="card"><h3>SQL parametrizado y RBAC</h3><p>PDO con sentencias preparadas; el rol controla qué páginas y endpoints puede ejecutar cada cuenta.</p></article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Modelo de datos</div><h2>Información relacionada y trazable</h2></div><div class="number">06 / 12</div></div>
+        <div class="tablemap">
+          <article class="card"><h3>usuarios</h3><code>id (PK)<br>nombre_usuario<br>password_hash<br>tipo_usuario</code></article>
+          <article class="card"><h3>productos</h3><code>id (PK)<br>nombre / precio<br>stock / mínimo<br>categoría / imagen</code></article>
+          <article class="card"><h3>ventas</h3><code>id (PK)<br>vendedor_id<br>subtotal / IVA<br>total / pago</code></article>
+          <article class="card"><h3>detalle_ventas</h3><code>venta_id (FK)<br>producto_id<br>cantidad / precio<br>subtotal_linea</code></article>
+          <article class="card"><h3>mensajes_almacen</h3><code>emisor / receptor<br>tipo / estado<br>producto_id<br>lecturas</code></article>
+        </div>
+        <p class="green" style="text-align:center;margin-top:26px">ventas 1:N detalle_ventas · usuarios 1:N ventas · productos 1:N detalle_ventas</p>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">APIs internas</div><h2>Interoperabilidad con respuestas JSON</h2></div><div class="number">07 / 12</div></div>
+        <div class="api-row"><span class="method">GET</span><code>/api/products.php</code><p>Catálogo, categorías, filtros e imágenes normalizadas.</p></div>
+        <div class="api-row"><span class="method">GET/POST</span><code>/api/sales.php</code><p>Consulta ventas del día o procesa una venta completa.</p></div>
+        <div class="api-row"><span class="method">GET/POST</span><code>/api/warehouse-messages.php</code><p>Mensajes, recibos de lectura y solicitudes de reabastecimiento.</p></div>
+        <div class="api-row"><span class="method">GET/POST</span><code>/api/stock-alerts.php</code><p>Detecta stock crítico y crea órdenes pendientes sin duplicarlas.</p></div>
+        <p class="warning" style="margin-top:22px">Las operaciones POST esperan sesión activa y <code>X-CSRF-Token</code>; un error devuelve HTTP 4xx/5xx con un mensaje JSON.</p>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Venta crítica</div><h2>La venta se ejecuta como una sola operación</h2></div><div class="number">08 / 12</div></div>
+        <div class="flow">
+          <article class="card flow-card"><strong>1 · UI</strong><b>Construye carrito</b><span>ID, cantidad e IVA</span></article><div class="arrow">→</div>
+          <article class="card flow-card"><strong>2 · SERVIDOR</strong><b>Valida sesión</b><span>CSRF y pago</span></article><div class="arrow">→</div>
+          <article class="card flow-card"><strong>3 · BASE</strong><b>Bloquea stock</b><span><code>FOR UPDATE</code></span></article>
+        </div>
+        <div class="grid3" style="margin-top:16px">
+          <article class="card"><h3>Dentro de la transacción</h3><p>UPDATE de existencias, INSERT de encabezado y INSERT de detalle.</p></article>
+          <article class="card"><h3>Alertas automáticas</h3><p>Si el stock queda bajo el mínimo, se registra una solicitud/alerta pendiente.</p></article>
+          <article class="card"><h3>Regla ACID</h3><p><code>COMMIT</code> al éxito o <code>ROLLBACK</code> ante stock insuficiente o error.</p></article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Valor administrativo</div><h2>Todo el negocio bajo control</h2></div><div class="number">09 / 12</div></div>
+        <div class="grid2">
+          <article class="card"><div class="metric">Catalog</div><h3>Gestión completa</h3><p>Alta, edición, eliminación, fotos, categorías, stock mínimo y actualización rápida.</p></article>
+          <article class="card"><div class="metric">Reports</div><h3>Análisis</h3><p>Ventas diarias y mensuales, ticket promedio, producto top y gráficos generados desde MySQL.</p></article>
+          <article class="card"><div class="metric">Inbox</div><h3>Comunicación interna</h3><p>Mensajes privados, avisos masivos, solicitudes de apoyo y reabastecimiento.</p></article>
+          <article class="card"><div class="metric">SQL</div><h3>Respaldo local</h3><p><code>mysqldump</code> genera un dump protegida por sesión de administrador y token CSRF.</p></article>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Métodos de pago</div><h2>Estrategia comercial, sin falsas promesas</h2></div><div class="number">10 / 12</div></div>
+        <div class="grid3">
+          <article class="card"><h3 class="green">Efectivo</h3><p>Ingresa efectivo recibido, calcula cambio y registra los valores en centavos convertidos desde la interfaz.</p></article>
+          <article class="card"><h3 class="accent">Tarjeta</h3><p><strong>Es una simulación local.</strong> Espera cinco segundos y solicita PIN, pero no lo envía ni lo almacena ni autoriza con un banco.</p></article>
+          <article class="card"><h3 class="accent">Transferencia</h3><p>Solicita CLABE configurada en entorno y referencia de hasta 50 caracteres. Valida el formato, no recepción bancaria real.</p></article>
+        </div>
+        <p class="warning" style="margin-top:24px">Para producción real se requiere integrar una pasarela certificada o una API bancaria; el módulo actual sirve como flujo funcional y demostrativo.</p>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Demostración</div><h2>Ocho pasos para mostrar el valor</h2></div><div class="number">11 / 13</div></div>
+        <div class="demo">
+          <div class="steps">
+            <div class="step"><strong>01 · ACCESO</strong><p>Inicia como administrador o vendedor y observa la redirección por rol.</p></div>
+            <div class="step"><strong>02 · CATÁLOGO</strong><p>Busca, filtra y agrega productos al carrito.</p></div>
+            <div class="step"><strong>03 · COBRO</strong><p>Aplica IVA y demuestra efectivo, tarjeta o transferencia.</p></div>
+            <div class="step"><strong>04 · RESULTADO</strong><p>Abre el ticket, imprime/PDF y consulta el historial del día.</p></div>
+          </div>
+          <div class="steps">
+            <div class="step"><strong>05 · STOCK</strong><p>Muestra una alerta crítica y la solicitud de reabastecimiento.</p></div>
+            <div class="step"><strong>06 · ADMIN</strong><p>Abre reportes, catálogo, usuarios y respaldo SQL.</p></div>
+            <div class="step"><strong>07 · SEGURIDAD</strong><p>Explica CSRF, sesión, prepared statements y bloqueo FOR UPDATE.</p></div>
+            <div class="step"><strong>08 · CIERRE</strong><p>Conecta cada función con ahorro de tiempo y control.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="topline"><div><div class="kicker">Interfaz real</div><h2>Lo que el cliente verá</h2></div><div class="number">12 / 13</div></div>
+        <div class="real-interface-grid">
+          <nav class="real-interface-tabs" aria-label="Interfaces reales">
+            <button class="demo-tab active" data-real="login"><b>Inicio de sesión</b><span>Autenticación real</span></button>
+            <button class="demo-tab" data-real="pos"><b>Punto de venta</b><span>Catálogo y ticket</span></button>
+            <button class="demo-tab" data-real="catalog"><b>Catálogo</b><span>Administración</span></button>
+            <button class="demo-tab" data-real="reports"><b>Dashboard</b><span>Reportes reales</span></button>
+            <button class="demo-tab" data-real="messages"><b>Mensajería</b><span>Almacén interno</span></button>
+          </nav>
+
+          <section class="real-frame-panel active" id="real-login">
+            <a class="interface-open" href="http://127.0.0.1/omnistock-pos/login.php" target="_blank" rel="noopener">Abrir interfaz completa ↗</a>
+            <iframe title="Inicio de sesión real de OmniStock" src="http://127.0.0.1/omnistock-pos/logout.php"></iframe>
+          </section>
+          <section class="real-frame-panel" id="real-pos">
+            <a class="interface-open" href="http://127.0.0.1/omnistock-pos/index.php" target="_blank" rel="noopener">Abrir POS completo ↗</a>
+            <iframe title="Punto de venta real de OmniStock" data-src="http://127.0.0.1/omnistock-pos/demo_session.php?target=omnistock-pos%2Findex.php"></iframe>
+          </section>
+          <section class="real-frame-panel" id="real-catalog">
+            <a class="interface-open" href="http://127.0.0.1/omnistock-pos/admin/index.php" target="_blank" rel="noopener">Abrir catálogo completo ↗</a>
+            <iframe title="Catálogo administrativo real" data-src="http://127.0.0.1/omnistock-pos/demo_session.php?target=omnistock-pos%2Fadmin%2Findex.php"></iframe>
+          </section>
+          <section class="real-frame-panel" id="real-reports">
+            <a class="interface-open" href="http://127.0.0.1/omnistock-pos/admin/reports.php" target="_blank" rel="noopener">Abrir dashboard completo ↗</a>
+            <iframe title="Dashboard real de OmniStock" data-src="http://127.0.0.1/omnistock-pos/demo_session.php?target=omnistock-pos%2Fadmin%2Freports.php"></iframe>
+          </section>
+          <section class="real-frame-panel" id="real-messages">
+            <a class="interface-open" href="http://127.0.0.1/omnistock-pos/admin/messages.php" target="_blank" rel="noopener">Abrir mensajería completa ↗</a>
+            <iframe title="Mensajería real de OmniStock" data-src="http://127.0.0.1/omnistock-pos/demo_session.php?target=omnistock-pos%2Fadmin%2Fmessages.php"></iframe>
+          </section>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="close">
+          <div class="number" style="position:absolute;right:70px;top:54px">13 / 13</div>
+          <div class="kicker">OmniStock POS Engine</div>
+          <h2>Más que una caja: <span class="accent">control operativo integral</span></h2>
+          <p class="hero-copy" style="max-width:780px">Una inversión que conecta ventas, inventario, seguridad, comunicación y análisis en una sola plataforma mantenible.</p>
+          <div class="close-row"><span class="chip">Implementación PHP 8</span><span class="chip">Datos MySQL / InnoDB</span><span class="chip">Interfaz responsive</span><span class="chip">Acceso por roles</span><span class="chip">Diseño extensible</span></div>
+          <button class="cta" data-go="1" style="margin-top:34px">Volver al inicio</button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="controls" aria-label="Controles de diapositivas">
+    <button class="navbtn" id="prev" aria-label="Diapositiva anterior">←</button>
+    <span class="count" id="count">01 / 13</span>
+    <button class="navbtn" id="next" aria-label="Diapositiva siguiente">→</button>
+  </div>
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const progress = document.querySelector('#progress');
+    const count = document.querySelector('#count');
+    let current = 1;
+
+    slides.forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.className = 'dot';
+      dot.textContent = String(index + 1).padStart(2, '0');
+      dot.setAttribute('aria-label', 'Ir a diapositiva ' + (index + 1));
+      dot.addEventListener('click', () => show(index + 1));
+      progress.appendChild(dot);
+    });
+
+    async function syncServer(slide) {
+      try {
+        await fetch('/api/state', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({slide})
+        });
+      } catch {}
+    }
+
+    function show(slide) {
+      current = Math.max(1, Math.min(slides.length, slide));
+      slides.forEach((item, index) => item.classList.toggle('active', index === current - 1));
+      [...progress.children].forEach((dot, index) => dot.classList.toggle('active', index === current - 1));
+      count.textContent = String(current).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+      syncServer(current);
+    }
+
+    document.querySelector('#prev').addEventListener('click', () => show(current - 1));
+    document.querySelector('#next').addEventListener('click', () => show(current + 1));
+    document.querySelector('#speaker').addEventListener('click', () => show(1));
+    document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => show(Number(button.dataset.go))));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') show(current + 1);
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') show(current - 1);
+      if (event.key === 'Home') show(1);
+      if (event.key === 'End') show(slides.length);
+    });
+
+    document.querySelectorAll('[data-real]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('[data-real]').forEach(item => item.classList.remove('active'));
+        document.querySelectorAll('.real-frame-panel').forEach(panel => panel.classList.remove('active'));
+        tab.classList.add('active');
+        const panel = document.querySelector('#real-' + tab.dataset.real);
+        panel.classList.add('active');
+        const frame = panel.querySelector('iframe[data-src]');
+        if (frame) {
+          frame.src = frame.dataset.src;
+          frame.removeAttribute('data-src');
+        }
+      });
+    });
+
+    fetch('/api/state').then(r => r.ok ? r.json() : null).then(state => show(state?.slide || 1)).catch(() => show(1));
+  </script>
+</body>
+</html>

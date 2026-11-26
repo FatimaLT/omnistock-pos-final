@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "initialization": "module",
+  "canvases": [
+    {
+      "id": "omnistock-sales-presentation",
+      "displayName": "Presentación OmniStock",
+      "description": "Presentación interactiva para demostrar y vender OmniStock POS.",
+      "actions": [
+        {
+          "name": "next_slide",
+          "description": "Avanza a la siguiente diapositiva."
+        },
+        {
+          "name": "previous_slide",
+          "description": "Regresa a la diapositiva anterior."
+        },
+        {
+          "name": "go_to_slide",
+          "description": "Muestra una diapositiva específica.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "slide": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 13
+              }
+            },
+            "required": ["slide"]
+          }
+        }
+      ]
+    }
+  ]
+}
