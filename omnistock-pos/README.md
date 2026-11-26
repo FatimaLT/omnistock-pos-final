@@ -119,7 +119,7 @@ Desde **Administración → Usuarios**, un administrador puede crear perfiles `v
 
 ### Accesos rápidos de demostración
 
-El `.env.example` mantiene el panel público desactivado por defecto. Solo habilita `OMNISTOCK_PUBLIC_DEMO_ENABLED=1` en un entorno de desarrollo aislado y con credenciales nuevas; el formulario las muestra públicamente y OmniStock puede crear esas cuentas al conectar la base. En producción, el panel está desactivado aunque la variable esté activa. Cambia o elimina cualquier cuenta demo que ya se haya creado.
+El `.env.example` mantiene el panel público desactivado por defecto. Con `OMNISTOCK_PUBLIC_DEMO_ENABLED=1`, el formulario muestra las credenciales configuradas y puede crear cuentas demo en desarrollo. Para una presentación escolar pública, también se puede activar explícitamente `OMNISTOCK_ALLOW_PUBLIC_CREDENTIALS=1` en producción: cualquier visitante podrá ingresar con esas cuentas y modificar los datos. Esta opción no crea cuentas demo en producción. Úsala solo para la presentación, sin datos reales, y desactívala y cambia las contraseñas después.
 
 La ruta `/demo.php` es una página aparte con datos ficticios de solo lectura; no sustituye la aplicación principal ni permite usar el POS, el mapa o las reseñas.
 

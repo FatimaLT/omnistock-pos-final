@@ -67,3 +67,11 @@ function omni_public_demo_enabled(): bool
 {
     return !omni_is_production() && getenv('OMNISTOCK_PUBLIC_DEMO_ENABLED') === '1';
 }
+
+function omni_public_demo_display_enabled(): bool
+{
+    return omni_public_demo_enabled() ||
+        (omni_is_production() &&
+            getenv('OMNISTOCK_PUBLIC_DEMO_ENABLED') === '1' &&
+            getenv('OMNISTOCK_ALLOW_PUBLIC_CREDENTIALS') === '1');
+}

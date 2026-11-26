@@ -36,9 +36,30 @@ $checks = [
         $withEnvironment([
             'APP_ENV' => 'production',
             'OMNISTOCK_PUBLIC_DEMO_ENABLED' => '1',
+            'OMNISTOCK_ALLOW_PUBLIC_CREDENTIALS' => '0',
         ], static function (): void {
-            if (omni_public_demo_enabled()) {
+            if (omni_public_demo_enabled() || omni_public_demo_display_enabled()) {
                 throw new RuntimeException('Public demo access must stay disabled in production.');
+            }
+        });
+    },
+    'displays public credentials in production only with explicit opt-in' => static function () use ($withEnvironment): void {
+        $withEnvironment([
+            'APP_ENV' => 'production',
+            'OMNISTOCK_PUBLIC_DEMO_ENABLED' => '1',
+            'OMNISTOCK_ALLOW_PUBLIC_CREDENTIALS' => '1',
+        ], static function (): void {
+            if (!omni_public_demo_display_enabled() || omni_public_demo_enabled()) {
+                throw new RuntimeException('Explicit production display must not enable demo account seeding.');
+            }
+        });
+        $withEnvironment([
+            'APP_ENV' => 'production',
+            'OMNISTOCK_PUBLIC_DEMO_ENABLED' => '0',
+            'OMNISTOCK_ALLOW_PUBLIC_CREDENTIALS' => '1',
+        ], static function (): void {
+            if (omni_public_demo_display_enabled()) {
+                throw new RuntimeException('Credential display must require both flags.');
             }
         });
     },
