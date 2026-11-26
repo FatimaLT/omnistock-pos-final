@@ -121,6 +121,8 @@ Desde **Administración → Usuarios**, un administrador puede crear perfiles `v
 
 El `.env.example` mantiene el panel público desactivado por defecto. Solo habilita `OMNISTOCK_PUBLIC_DEMO_ENABLED=1` en un entorno de desarrollo aislado y con credenciales nuevas; el formulario las muestra públicamente y OmniStock puede crear esas cuentas al conectar la base. En producción, el panel está desactivado aunque la variable esté activa. Cambia o elimina cualquier cuenta demo que ya se haya creado.
 
+Para una presentación pública, el enlace **¿Presentación en clase?** del inicio abre `/demo.php` sin iniciar sesión. Esa página muestra un catálogo ficticio de solo lectura y no se conecta a la base de datos real; no compartas credenciales de administrador o vendedor para una demostración pública.
+
 ### Inicio automático en VS Code
 
 Al abrir esta carpeta como espacio de trabajo en VS Code, la tarea `OmniStock: iniciar y abrir interfaz` comprueba `http://127.0.0.1:8765/login.php`, inicia el servidor PHP si hace falta y abre una sola página cuando el login responde. Si VS Code pregunta si se permiten tareas automáticas para esta carpeta, selecciona **Permitir**. Deben estar disponibles PHP (en `PATH`, `OMNISTOCK_PHP_EXE`, `C:\xampp\php\php.exe` o `C:\xampp2\php\php.exe`) y MySQL en el puerto configurado. La comprobación de inicio verifica la página web; no sustituye la comprobación de conexión a MySQL al iniciar sesión.

@@ -220,7 +220,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <button class="login-submit" type="submit"><span>Iniciar sesión</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         </form>
 
-        <a class="login-demo-link" href="<?= htmlspecialchars($appBasePath, ENT_QUOTES, 'UTF-8') ?>/demo.php">Explorar demo pública de solo lectura</a>
+        <a class="login-demo-link" href="<?= htmlspecialchars($appBasePath, ENT_QUOTES, 'UTF-8') ?>/demo.php">
+          <span>
+            <strong>¿Presentación en clase?</strong>
+            <small>Entra a la demo sin usuario ni contraseña. Usa productos ficticios y no modifica el inventario real.</small>
+          </span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
 
         <?php if ($demoPublicEnabled): ?>
         <details class="demo-access-panel">

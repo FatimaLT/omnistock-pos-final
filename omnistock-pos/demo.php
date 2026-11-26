@@ -38,7 +38,7 @@ $products = [
     <section class="public-demo-intro" aria-labelledby="demo-title">
       <span class="public-demo-badge">DEMOSTRACIÓN · SOLO LECTURA</span>
       <h1 id="demo-title">Explora OmniStock</h1>
-      <p>Este catálogo usa datos ficticios y no está conectado al inventario real. No permite iniciar sesión, registrar ventas ni modificar productos.</p>
+      <p>No necesitas usuario ni contraseña para esta presentación. Este catálogo usa productos ficticios y no está conectado al inventario real; no registra ventas ni modifica productos.</p>
     </section>
 
     <section class="public-demo-grid" aria-label="Productos ficticios de demostración">

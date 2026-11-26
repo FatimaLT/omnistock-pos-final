@@ -63,8 +63,12 @@
 .login-submit { display: flex; height: 43px; align-items: center; justify-content: center; gap: 10px; margin-top: 23px; border: 1px solid rgba(34, 211, 238, .2); border-radius: 7px; color: #eafcff; background: linear-gradient(100deg, #0891b2, #06b6d4); box-shadow: 0 6px 18px rgba(6, 182, 212, .13); font-size: 11px; font-weight: 700; cursor: pointer; transition: .2s; }
 .login-submit:hover { filter: brightness(1.09); box-shadow: 0 8px 23px rgba(6, 182, 212, .22); }
 .login-submit svg { width: 15px; }
-.login-demo-link { display: block; margin-top: 15px; color: #a5eaf2; font-size: 10px; text-align: center; text-decoration: none; }
-.login-demo-link:hover { color: #67e8f9; text-decoration: underline; }
+.login-demo-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 15px; padding: 12px 13px; border: 1px solid rgba(52, 211, 153, .22); border-radius: 9px; color: #a5eaf2; background: rgba(16, 185, 129, .06); text-align: left; text-decoration: none; transition: border-color .2s, background .2s; }
+.login-demo-link span { display: grid; gap: 5px; }
+.login-demo-link strong { color: #d7fff0; font-size: 10px; }
+.login-demo-link small { color: #91a7b3; font-size: 9px; line-height: 1.5; }
+.login-demo-link svg { width: 16px; height: 16px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.login-demo-link:hover { border-color: rgba(52, 211, 153, .5); color: #67e8f9; background: rgba(16, 185, 129, .11); }
 .login-security { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 22px; color: #65768b; font-size: 9px; }
 .login-security svg { width: 12px; height: 12px; color: #678399; }
 .login-mobile-footer { display: none; }
@@ -147,7 +151,9 @@
 [data-theme="light"] .input-wrap input::placeholder { color: #65748a; }
 [data-theme="light"] .login-submit { border-color: #4788ff; color: #fff; background: #4788ff; box-shadow: 0 6px 18px rgba(71, 136, 255, .16); }
 [data-theme="light"] .login-submit:hover { background: #3478ed; box-shadow: 0 8px 23px rgba(71, 136, 255, .22); }
-[data-theme="light"] .login-demo-link { color: #3478ed; }
+[data-theme="light"] .login-demo-link { border-color: rgba(16, 185, 129, .28); color: #3478ed; background: rgba(16, 185, 129, .06); }
+[data-theme="light"] .login-demo-link strong { color: #0c513b; }
+[data-theme="light"] .login-demo-link small { color: #52627a; }
 [data-theme="light"] .login-mobile-footer { color: #52627a; }
 [data-theme="light"] .demo-access-panel { border-color: rgba(16, 28, 53, .14); background: rgba(128, 183, 255, .08); }
 [data-theme="light"] .demo-access-panel[open] > summary { border-bottom-color: rgba(16, 28, 53, .1); }
