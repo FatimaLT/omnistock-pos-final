@@ -32,3 +32,5 @@ Render ejecuta el servicio usando el `Dockerfile` de la raíz, que instala PHP, 
 4. Despliega la rama `main` y revisa los logs. Si falta la conexión MySQL, la aplicación debe mostrar un error de conexión, no crear una base SQLite alternativa ni datos de prueba.
 
 No uses scripts PHP públicos para importar SQL ni guardes contraseñas en archivos del repositorio. La conexión pública de MySQL requiere credenciales nuevas, fuertes y guardadas solo en Railway/Render.
+
+La ruta `/demo.php` ofrece una vista pública de solo lectura con productos ficticios. No inicia sesión ni permite modificar el inventario real.
