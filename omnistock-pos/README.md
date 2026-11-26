@@ -36,7 +36,7 @@ La interfaz conserva la arquitectura PHP/JavaScript/CSS de este repositorio y or
 ```bash
 cp .env.example .env
 # Edita .env con tus credenciales:
-#   - DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+#   - OMNISTOCK_DB_HOST, OMNISTOCK_DB_PORT, OMNISTOCK_DB_NAME, OMNISTOCK_DB_USER, OMNISTOCK_DB_PASSWORD
 #   - OMNISTOCK_INITIAL_ADMIN_PASSWORD (mín. 12 caracteres)
 #   - OMNISTOCK_SEED_DEMO_SELLER=1 (opcional)
 ```
@@ -119,7 +119,7 @@ Desde **Administración → Usuarios**, un administrador puede crear perfiles `v
 
 ### Accesos rápidos de demostración
 
-El archivo `.env.example` incluye cuentas públicas para el portafolio: al copiarlo como `.env`, el panel se activa y OmniStock crea esas cuentas con el primer acceso a la base. El panel publica las credenciales y sus cuentas tienen rol administrador y vendedor; usa esta configuración solo con una base aislada y datos ficticios. Antes de conectarla a un negocio real, desactiva `OMNISTOCK_PUBLIC_DEMO_ENABLED` y elimina las credenciales demo. Para usar otros accesos, cambia las cuatro variables `OMNISTOCK_PUBLIC_DEMO_*` y reinicia PHP/Apache. Los botones solo autocompletan el formulario y no omiten CSRF ni `password_verify()`.
+El `.env.example` mantiene el panel público desactivado por defecto. Solo habilita `OMNISTOCK_PUBLIC_DEMO_ENABLED=1` en un entorno de desarrollo aislado y con credenciales nuevas; el formulario las muestra públicamente y OmniStock puede crear esas cuentas al conectar la base. En producción, el panel está desactivado aunque la variable esté activa. Cambia o elimina cualquier cuenta demo que ya se haya creado.
 
 ### Inicio automático en VS Code
 

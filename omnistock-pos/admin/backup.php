@@ -30,11 +30,11 @@ ignore_user_abort(true);
 try {
     $pdo = database_connection();
     $pdo->query('SELECT 1');
-    $database = getenv('OMNISTOCK_DB_NAME') ?: 'omnistock_db';
-    $host = getenv('OMNISTOCK_DB_HOST') ?: 'localhost';
-    $port = getenv('OMNISTOCK_DB_PORT') ?: '3306';
-    $username = getenv('OMNISTOCK_DB_USER') ?: 'root';
-    $password = getenv('OMNISTOCK_DB_PASSWORD') ?: '';
+    $database = database_setting('OMNISTOCK_DB_NAME', 'DB_NAME', 'omnistock_db');
+    $host = database_setting('OMNISTOCK_DB_HOST', 'DB_HOST', 'localhost');
+    $port = database_setting('OMNISTOCK_DB_PORT', 'DB_PORT', '3306');
+    $username = database_setting('OMNISTOCK_DB_USER', 'DB_USER', 'root');
+    $password = database_setting('OMNISTOCK_DB_PASSWORD', 'DB_PASSWORD', '');
 
     if (!preg_match('/^[a-zA-Z0-9_$-]+$/', $database)) {
         throw new RuntimeException('La configuración de base de datos no es válida.');

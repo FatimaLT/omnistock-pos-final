@@ -96,7 +96,7 @@ function omni_seed_configured_users(PDO $pdo): void
         omni_seed_user($pdo, 'vendedor@omnistock.com', 'Vendedor de prueba', 'vendedor', $sellerPassword);
     }
 
-    if (getenv('OMNISTOCK_PUBLIC_DEMO_ENABLED') === '1') {
+    if (omni_public_demo_enabled()) {
         $demoUsers = [
             [
                 'username_env' => 'OMNISTOCK_PUBLIC_DEMO_ADMIN_USERNAME',

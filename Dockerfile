@@ -1,21 +1,16 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
-# Instalar dependencias y extensiones necesarias
-RUN apt-get update && apt-get install -y libsqlite3-dev \
-    && docker-php-ext-install pdo_mysql mysqli pdo_sqlite
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libonig-dev \
+    && docker-php-ext-install mbstring pdo_mysql \
+    && a2enmod rewrite headers \
+    && rm -rf /var/lib/apt/lists/*
 
-# Habilitar mod_rewrite
-RUN a2enmod rewrite
+COPY omnistock-pos/ /var/www/html/
 
-# Copiar todo el repositorio al contenedor
-COPY . /var/www/html/
-
-# Apuntar el DocumentRoot a tu subcarpeta de proyecto
-RUN sed -i 's!/var/www/html!/var/www/html/omnistock-pos!g' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's!/var/www/!/var/www/html/omnistock-pos!g' /etc/apache2/apache2.conf
-
-# Ajustar permisos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+RUN mkdir -p /var/www/html/public/img/productos /var/www/html/public/img/mensajes \
+    && chown -R www-data:www-data /var/www/html/public/img/productos /var/www/html/public/img/mensajes
 
 EXPOSE 80
+
+CMD ["apache2-foreground"]

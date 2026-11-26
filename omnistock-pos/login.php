@@ -19,23 +19,37 @@ if (!isset($_SESSION['login_csrf'])) {
 
 $errorMessage = '';
 $username = '';
-
-// Credenciales demo visibles y listas para usar
-$demoPublicEnabled = true;
+$demoPublicEnabled = omni_public_demo_enabled();
 $demoAccounts = [
     [
         'role' => 'Administrador',
-        'username' => getenv('OMNISTOCK_PUBLIC_DEMO_ADMIN_USERNAME') ?: 'admin@omnistock.com',
-        'password' => getenv('OMNISTOCK_PUBLIC_DEMO_ADMIN_PASSWORD') ?: 'Admin@OmniStock2026',
-        'available' => true,
+        'username' => '',
+        'password' => '',
+        'username_env' => 'OMNISTOCK_PUBLIC_DEMO_ADMIN_USERNAME',
+        'password_env' => 'OMNISTOCK_PUBLIC_DEMO_ADMIN_PASSWORD',
     ],
     [
         'role' => 'Vendedor de prueba',
-        'username' => getenv('OMNISTOCK_PUBLIC_DEMO_SELLER_USERNAME') ?: 'vendedor@omnistock.com',
-        'password' => getenv('OMNISTOCK_PUBLIC_DEMO_SELLER_PASSWORD') ?: 'Vendedor@OmniStock2026',
-        'available' => true,
+        'username' => '',
+        'password' => '',
+        'username_env' => 'OMNISTOCK_PUBLIC_DEMO_SELLER_USERNAME',
+        'password_env' => 'OMNISTOCK_PUBLIC_DEMO_SELLER_PASSWORD',
     ],
 ];
+
+foreach ($demoAccounts as &$demoAccount) {
+    if ($demoPublicEnabled) {
+        $demoAccount['username'] = trim((string) (getenv($demoAccount['username_env']) ?: ''));
+        $demoAccount['password'] = (string) (getenv($demoAccount['password_env']) ?: '');
+    }
+    $demoAccount['available'] = $demoPublicEnabled &&
+        $demoAccount['username'] !== '' &&
+        strlen($demoAccount['username']) <= 80 &&
+        strlen($demoAccount['password']) >= 12 &&
+        strlen($demoAccount['password']) <= 200;
+    unset($demoAccount['username_env'], $demoAccount['password_env']);
+}
+unset($demoAccount);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim((string) ($_POST['username'] ?? ''));
@@ -61,15 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } catch (PDOException $e2) {
                     $tableName = 'user';
                 }
-            }
-
-            // Asegurarnos de que el usuario administrador por defecto exista en la base de datos
-            $stmtCheck = $pdo->prepare("SELECT COUNT(*) FROM `$tableName`");
-            $stmtCheck->execute();
-            if ($stmtCheck->fetchColumn() == 0) {
-                $hashDefault = password_hash('Admin@OmniStock2026', PASSWORD_DEFAULT);
-                $insertDef = $pdo->prepare("INSERT INTO `$tableName` (email, password_hash, rol) VALUES ('admin@omnistock.com', ?, 'admin')");
-                $insertDef->execute([$hashDefault]);
             }
 
             $userColumns = [];
@@ -123,27 +128,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            // Acceso de respaldo garantizado para el administrador por defecto
-            if ($username === 'admin@omnistock.com' && $password === 'Admin@OmniStock2026') {
-                $_SESSION['user_id'] = 1;
-                $_SESSION['username'] = 'admin@omnistock.com';
-                $_SESSION['role'] = 'admin';
-                unset($_SESSION['login_csrf']);
-                header('Location: ' . $appBasePath . '/admin/');
-                exit;
-            }
-
             $errorMessage = 'Usuario o contraseña incorrectos.';
-        } catch (Exception $exception) {
-            if ($username === 'admin@omnistock.com' && $password === 'Admin@OmniStock2026') {
-                $_SESSION['user_id'] = 1;
-                $_SESSION['username'] = 'admin@omnistock.com';
-                $_SESSION['role'] = 'admin';
-                unset($_SESSION['login_csrf']);
-                header('Location: ' . $appBasePath . '/admin/');
-                exit;
-            }
-            $errorMessage = 'Usuario o contraseña incorrectos.';
+        } catch (PDOException $exception) {
+            error_log('OmniStock login: ' . $exception->getMessage());
+            $errorMessage = 'No fue posible iniciar sesión en este momento. Inténtalo más tarde.';
+        } catch (RuntimeException $exception) {
+            error_log('OmniStock login configuration: ' . $exception->getMessage());
+            $errorMessage = 'No fue posible iniciar sesión en este momento. Inténtalo más tarde.';
         }
     }
 }
@@ -229,7 +220,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <button class="login-submit" type="submit"><span>Iniciar sesión</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         </form>
 
-        <details class="demo-access-panel" open>
+        <?php if ($demoPublicEnabled): ?>
+        <details class="demo-access-panel">
           <summary>
             <span class="demo-access-title">
               <strong>Accesos Rápidos de Demostración</strong>
@@ -238,25 +230,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
           </summary>
           <div class="demo-access-content">
-            <p class="demo-access-intro">Haz clic en "Autocompletar" para rellenar los datos de acceso automáticamente.</p>
+            <p class="demo-access-intro">Selecciona un perfil para autocompletar el formulario; el acceso conserva la validación habitual.</p>
             <?php foreach ($demoAccounts as $demoAccount): ?>
               <article class="demo-account">
                 <h3><?= htmlspecialchars($demoAccount['role'], ENT_QUOTES, 'UTF-8') ?></h3>
-                <dl class="demo-credentials">
-                  <div><dt>Usuario / correo</dt><dd><code><?= htmlspecialchars($demoAccount['username'], ENT_QUOTES, 'UTF-8') ?></code></dd></div>
-                  <div><dt>Contraseña</dt><dd><code><?= htmlspecialchars($demoAccount['password'], ENT_QUOTES, 'UTF-8') ?></code></dd></div>
-                </dl>
-                <button
-                  class="demo-autofill"
-                  type="button"
-                  aria-label="Autocompletar como <?= htmlspecialchars($demoAccount['role'], ENT_QUOTES, 'UTF-8') ?>"
-                  data-demo-username="<?= htmlspecialchars($demoAccount['username'], ENT_QUOTES, 'UTF-8') ?>"
-                  data-demo-password="<?= htmlspecialchars($demoAccount['password'], ENT_QUOTES, 'UTF-8') ?>"
-                >Autocompletar</button>
+                <?php if ($demoAccount['available']): ?>
+                  <dl class="demo-credentials">
+                    <div><dt>Usuario / correo</dt><dd><code><?= htmlspecialchars($demoAccount['username'], ENT_QUOTES, 'UTF-8') ?></code></dd></div>
+                    <div><dt>Contraseña de prueba</dt><dd><code><?= htmlspecialchars($demoAccount['password'], ENT_QUOTES, 'UTF-8') ?></code></dd></div>
+                  </dl>
+                  <button
+                    class="demo-autofill"
+                    type="button"
+                    aria-label="Autocompletar como <?= htmlspecialchars($demoAccount['role'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-demo-username="<?= htmlspecialchars($demoAccount['username'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-demo-password="<?= htmlspecialchars($demoAccount['password'], ENT_QUOTES, 'UTF-8') ?>"
+                  >Autocompletar</button>
+                <?php else: ?>
+                  <p class="demo-account-unavailable">Credenciales demo no configuradas.</p>
+                <?php endif; ?>
               </article>
             <?php endforeach; ?>
           </div>
         </details>
+        <?php endif; ?>
 
         <div class="login-security"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Conexión protegida · Tus datos están seguros</span></div>
       </div>

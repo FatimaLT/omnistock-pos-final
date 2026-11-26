@@ -8,8 +8,49 @@ if (PHP_SAPI !== 'cli') {
 
 require_once __DIR__ . '/../config/payment.php';
 require_once __DIR__ . '/../config/product_catalog.php';
+require_once __DIR__ . '/../config/env.php';
+
+$withEnvironment = static function (array $values, callable $check): void {
+    $previousValues = [];
+    foreach ($values as $key => $value) {
+        $previousValues[$key] = getenv($key);
+        putenv($key . '=' . $value);
+    }
+
+    try {
+        $check();
+    } finally {
+        foreach ($previousValues as $key => $value) {
+            if ($value === false) {
+                putenv($key);
+            } else {
+                putenv($key . '=' . $value);
+            }
+        }
+    }
+};
 
 $checks = [
+    'disables public demo access in production' => static function () use ($withEnvironment): void {
+        $withEnvironment([
+            'APP_ENV' => 'production',
+            'OMNISTOCK_PUBLIC_DEMO_ENABLED' => '1',
+        ], static function (): void {
+            if (omni_public_demo_enabled()) {
+                throw new RuntimeException('Public demo access must stay disabled in production.');
+            }
+        });
+    },
+    'enables public demo access only when explicitly configured outside production' => static function () use ($withEnvironment): void {
+        $withEnvironment([
+            'APP_ENV' => 'development',
+            'OMNISTOCK_PUBLIC_DEMO_ENABLED' => '1',
+        ], static function (): void {
+            if (!omni_public_demo_enabled()) {
+                throw new RuntimeException('Public demo access should be enabled in explicitly configured development.');
+            }
+        });
+    },
     'accepts an 18-digit CLABE' => static function (): void {
         if (!transfer_clabe_is_valid('646180157000000019')) {
             throw new RuntimeException('An 18-digit CLABE should be accepted.');

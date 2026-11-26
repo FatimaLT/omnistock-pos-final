@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: omnistock-pos-final
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /login.php
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: OMNISTOCK_PUBLIC_DEMO_ENABLED
+        value: "0"
+      - key: OMNISTOCK_SEED_DEMO_SELLER
+        value: "0"
+      - key: OMNISTOCK_DB_HOST
+        sync: false
+      - key: OMNISTOCK_DB_PORT
+        sync: false
+      - key: OMNISTOCK_DB_NAME
+        sync: false
+      - key: OMNISTOCK_DB_USER
+        sync: false
+      - key: OMNISTOCK_DB_PASSWORD
+        sync: false
+      - key: OMNISTOCK_INITIAL_ADMIN_PASSWORD
+        sync: false

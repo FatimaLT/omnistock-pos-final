@@ -47,7 +47,7 @@ function load_env_file(string $path = __DIR__ . '/../.env'): void
         }
         
         // Set environment variable only if not already set
-        if (!getenv($key)) {
+        if (getenv($key) === false) {
             putenv("$key=$value");
         }
     }
@@ -55,3 +55,15 @@ function load_env_file(string $path = __DIR__ . '/../.env'): void
 
 // Auto-load .env file
 load_env_file();
+
+function omni_is_production(): bool
+{
+    $appEnvironment = strtolower(trim((string) (getenv('APP_ENV') ?: 'production')));
+
+    return in_array($appEnvironment, ['prod', 'production'], true);
+}
+
+function omni_public_demo_enabled(): bool
+{
+    return !omni_is_production() && getenv('OMNISTOCK_PUBLIC_DEMO_ENABLED') === '1';
+}

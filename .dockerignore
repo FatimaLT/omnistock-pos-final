@@ -1,0 +1,12 @@
+.git
+.github
+.vscode
+.env
+.env.*
+!.env.example
+*.sql
+**/*.sql
+backups/
+**/backups/
+importar.php
+cargar_a_railway.php
